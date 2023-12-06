@@ -8,19 +8,23 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
+app.use(express.json());
 import { Server } from "socket.io";
 import { createServer } from "http";
 
 const httpServer = createServer(app);
 
-const io = new Server(httpServer);
-io.on("connection", (socket) => {
-  socket.emit("connect", { message: "a new client" });
-  socket.on("error", (error) => {
-    console.error("Socket error:", error);
-  });
-});
+const io = new Server(httpServer, { cors: { origin: "*" } });
 
 httpServer.listen(process.env.PORT, () => {
   console.log("listening on port " + process.env.PORT);
+});
+
+io.on("connection", (socket) => {
+  console.log("connected to socket " + socket.id);
+  // socket.emit("data", "first emit");
+  socket.on("realtime", (data) => {
+    console.log(data);
+    io.emit("data", data);
+  });
 });
