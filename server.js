@@ -25,9 +25,6 @@ io.on("connection", (socket) => {
   // socket.emit("data", "first emit");
   socket.on("realtime", (data) => {
     console.log(data);
-    io.emit("data", data);
-  });
-  socket.on("disconnect", () => {
-    console.log("socket disconnected " + socket.id);
+    socket.broadcast.emit("data", { text: data.text, sender: "User" });
   });
 });
